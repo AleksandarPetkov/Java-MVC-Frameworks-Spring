@@ -1,5 +1,6 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Real Estate Agency</title>
@@ -17,10 +18,10 @@
 	</div>
     <div id="offerManager">
         <div id="regOffer">
-            <a href="/reg" class="button">Reg Offer</a>
+            <a th:href="@{register.html}" class="button">Reg Offer</a>
         </div>
         <div id="findOffer">
-            <a href="/find" class="button">Find Offer</a>
+            <a th:href="@{find.html}" class="button">Find Offer</a>
         </div>
     </div>
 </section>
