@@ -6,7 +6,7 @@ public class UserRegisterBindingModel {
 
     private String password;
 
-    private String confPassword;
+    private String confirmPassword;
 
     private String email;
 
@@ -29,12 +29,12 @@ public class UserRegisterBindingModel {
         this.password = password;
     }
 
-    public String getConfPassword() {
-        return confPassword;
+    public String getConfirmPassword() {
+        return confirmPassword;
     }
 
-    public void setConfPassword(String confPassword) {
-        this.confPassword = confPassword;
+    public void setConfirmPassword(String confirmPassword) {
+        this.confirmPassword = confirmPassword;
     }
 
     public String getEmail() {

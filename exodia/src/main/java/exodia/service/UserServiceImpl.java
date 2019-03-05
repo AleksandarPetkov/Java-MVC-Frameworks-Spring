@@ -36,6 +36,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserServiceModel loginUser(UserServiceModel serviceModel) {
-        return null;
+        User user = this.userRepository.findUserByUsername(serviceModel.getUsername()).orElse(null);
+
+        if (user == null || !user.getPassword().equals(DigestUtils.sha256Hex(serviceModel.getPassword()))){
+            return null;
+        }
+
+        return serviceModel;
     }
 }
