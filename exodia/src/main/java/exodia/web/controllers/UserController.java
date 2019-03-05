@@ -29,8 +29,12 @@ public class UserController {
 
 
     @GetMapping("/register")
-    public ModelAndView modelAndView(ModelAndView modelAndView) {
-        modelAndView.setViewName("register");
+    public ModelAndView modelAndView(ModelAndView modelAndView, HttpSession session) {
+        if (session.getAttribute("username") != null) {
+            modelAndView.setViewName("redirect:/home");
+        } else {
+            modelAndView.setViewName("register");
+        }
         return modelAndView;
     }
 
@@ -49,8 +53,12 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public ModelAndView login(ModelAndView modelAndView) {
-        modelAndView.setViewName("login");
+    public ModelAndView login(ModelAndView modelAndView, HttpSession session) {
+        if (session.getAttribute("username") != null) {
+            modelAndView.setViewName("redirect:/home");
+        } else {
+            modelAndView.setViewName("login");
+        }
         return modelAndView;
     }
 
@@ -59,7 +67,7 @@ public class UserController {
                                   HttpSession session) {
         UserServiceModel model = this.userService.loginUser(this.modelMapper.map(bindingModel, UserServiceModel.class));
 
-        if (model == null){
+        if (model == null) {
             throw new IllegalArgumentException("Not a valid User or Password");
         }
 
@@ -71,9 +79,13 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public ModelAndView logout(ModelAndView modelAndView, HttpSession session){
-        session.invalidate();
-        modelAndView.setViewName("redirect:/");
+    public ModelAndView logout(ModelAndView modelAndView, HttpSession session) {
+        if (session.getAttribute("username") == null) {
+            modelAndView.setViewName("redirect:/login");
+        } else {
+            session.invalidate();
+            modelAndView.setViewName("redirect:/");
+        }
         return modelAndView;
     }
 
