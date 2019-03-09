@@ -3,46 +3,89 @@ package org.softuni.cardealer.service;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
+import org.junit.runner.RunWith;
 import org.modelmapper.ModelMapper;
+import org.softuni.cardealer.domain.entities.Supplier;
 import org.softuni.cardealer.domain.models.service.SupplierServiceModel;
 import org.softuni.cardealer.repository.SupplierRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.jdbc.EmbeddedDatabaseConnection;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.junit4.SpringRunner;
 
+@RunWith(SpringRunner.class)
+@DataJpaTest
+@AutoConfigureTestDatabase(connection = EmbeddedDatabaseConnection.H2)
 public class SupplierServiceTests {
 
-    private SupplierService supplierService;
+    @Autowired
+    private SupplierRepository supplierRepository;
+
     private ModelMapper modelMapper;
 
-    @Before()
+    @Before
     public void init() {
-        SupplierRepository supplierRepository = Mockito.mock(SupplierRepository.class);
         this.modelMapper = new ModelMapper();
-        this.supplierService = new SupplierServiceImpl(supplierRepository, modelMapper);
     }
 
     @Test
-    public void saveSupplier_whenCorrectSave_expectServiceModel() {
+    public void saveSupplier_whenCorrectSave_expectCorrectSave() {
         //Arrange
-        SupplierServiceModel expectedSupplier = new SupplierServiceModel();
-        expectedSupplier.setId("111");
-
+        SupplierService supplierService = new SupplierServiceImpl(supplierRepository, modelMapper);
+        SupplierServiceModel supplierTest = new SupplierServiceModel();
+        supplierTest.setName("XXX");
+        supplierTest.setImporter(true);
 
         //Act
-        SupplierServiceModel actualSupplier = supplierService.saveSupplier(expectedSupplier);
-        actualSupplier.setId("111");
+        SupplierServiceModel actualSupplier = supplierService.saveSupplier(supplierTest);
+        SupplierServiceModel expectedSupplier = this.modelMapper
+                .map(this.supplierRepository.findAll().get(0), SupplierServiceModel.class);
 
         //Assert
         Assert.assertEquals(expectedSupplier.getId(), actualSupplier.getId());
+        Assert.assertEquals(expectedSupplier.getName(), actualSupplier.getName());
+        Assert.assertEquals(expectedSupplier.isImporter(), actualSupplier.isImporter());
+    }
+
+    @Test(expected = Exception.class)
+    public void saveSupplier_whenSaveSupplier_expectException() {
+        //Arrange
+        SupplierService supplierService = new SupplierServiceImpl(supplierRepository, modelMapper);
+        SupplierServiceModel supplierTest = new SupplierServiceModel();
+        supplierTest.setName(null);
+        supplierTest.setImporter(true);
+
+        //Act and Assert Exception
+        SupplierServiceModel actualSupplier = supplierService.editSupplier(supplierTest);
 
     }
 
-    @Test(expected = AnyException.class)
-    public void saveSupplier_whenIsNull_expectNull() {
+    @Test
+    public void editSupplier_whenCorrectEdit_expectCorrectEdit() {
+        //Arrange
+        SupplierService supplierService = new SupplierServiceImpl(supplierRepository, modelMapper);
+        
+        Supplier supplierTest = new Supplier();
+        supplierTest.setName("Dori");
+        supplierTest.setImporter(true);
+        this.supplierRepository.save(supplierTest);
 
         //Act
-        SupplierServiceModel actualSupplier = supplierService.saveSupplier(null);
+        SupplierServiceModel methodSupplier = new SupplierServiceModel();
+        methodSupplier.setId(supplierTest.getId());
+        methodSupplier.setName("AAA");
+        methodSupplier.setImporter(false);
+
+        SupplierServiceModel actualSupplier = supplierService.editSupplier(methodSupplier);
+        SupplierServiceModel expectedSupplier = this.modelMapper
+                .map(this.supplierRepository.findAll().get(0), SupplierServiceModel.class);
 
         //Assert
-        Assert.assertNull(null, actualSupplier);
+        Assert.assertEquals(expectedSupplier.getId(), actualSupplier.getId());
+        Assert.assertEquals(expectedSupplier.getName(), actualSupplier.getName());
+        Assert.assertEquals(expectedSupplier.isImporter(), actualSupplier.isImporter());
+
     }
+
 }
