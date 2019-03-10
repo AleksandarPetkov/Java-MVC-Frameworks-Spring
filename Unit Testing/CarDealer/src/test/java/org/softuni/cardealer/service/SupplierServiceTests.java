@@ -72,12 +72,12 @@ public class SupplierServiceTests {
         supplierTest.setImporter(true);
         this.supplierRepository.save(supplierTest);
 
-        //Act
         SupplierServiceModel methodSupplier = new SupplierServiceModel();
         methodSupplier.setId(supplierTest.getId());
         methodSupplier.setName("AAA");
         methodSupplier.setImporter(false);
 
+        //Act
         SupplierServiceModel actualSupplier = supplierService.editSupplier(methodSupplier);
         SupplierServiceModel expectedSupplier = this.modelMapper
                 .map(this.supplierRepository.findAll().get(0), SupplierServiceModel.class);
