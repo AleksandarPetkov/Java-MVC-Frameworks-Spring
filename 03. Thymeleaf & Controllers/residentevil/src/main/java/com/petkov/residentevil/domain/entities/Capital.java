@@ -1,4 +1,4 @@
-package com.petkov.residentevil.entities;
+package com.petkov.residentevil.domain.entities;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
